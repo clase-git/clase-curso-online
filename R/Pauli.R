@@ -107,3 +107,47 @@ do_silly_stuff <- function(x) {
 mtcars2 <- mtcars %>% 
   mutate(across(c("mpg", "disp"),
                 .fns = list(norm = ~do_silly_stuff(.))  ))
+
+
+sumar_xy <- function(x, y) {
+  x + y
+}
+#Copy Code
+body(sumar_xy)
+
+formals(sumar_xy)
+environment(sumar_xy)
+
+wrapper <- function() {
+  sumar_xy <- function(x, y) {
+    x + y
+  }
+  return(environment(sumar_xy))  
+}
+wrapper()
+
+demon <- 
+  readr:: read_csv("data/demon_slayer.csv") |>
+  janitor::clean_names()
+
+get_imc <- function(weight, height) {
+  imc <- weight /(height / 100) **2
+  return(imc)
+}
+demon <- demon %>% 
+  mutate(imc = get_imc(weight = weight_kg, height = height_cm))
+
+categorias <- read_csv("data/categorias_imc.csv")
+categorias
+get_label <- function(imc) {
+  if (imc <= 18.5) {
+    label <- "bajo peso"
+  } else if (imc <= 24.9) {
+    label <- "peso normal"
+  } else if (imc <= 29.9) {
+    label <- "sobrepeso"
+  } else if (imc > 29.9) {
+    label <- "obesidad"
+  }
+  return(label)
+}
