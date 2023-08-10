@@ -1,3 +1,4 @@
+library(dplyr)
 #TAREA
 #Ejercicio 1
 get_cv<-function(vector, remover_na=FALSE) {
@@ -39,14 +40,21 @@ build_address <- function(calle, numero, departamento = NULL) {
   p4 <- "n"
   p5 <- "Av."
  
-  
   numero <-  gsub(paste(p1, "|", p2, "|", p3, "|", p4,"|", p5, sep = ""), "", texto1)
   
+  texto2 <- departamento
+  p11 <- "departamento"
+  p12 <- "depto"
+  p13 <- "depto."
+  p14 <- "NULL"
+  p15 <- "dpto"
+  
+  departamento <-  gsub(paste(p11, "|", p12, "|", p13, "|", p14,"|", p15, sep = ""), "", texto2)
   
   if (is.null(departamento)) {
-    direccion <- paste(calle, numero)
+    direccion <- data.frame(paste(calle, numero))
   } else {
-    direccion <- paste(calle, numero, "dpto.", departamento)
+    direccion <- data.frame(paste(calle, numero, "dpto.", departamento))
   }
   
   return(direccion)
@@ -54,7 +62,18 @@ build_address <- function(calle, numero, departamento = NULL) {
 
 # Ejemplos de uso:
 direccion_1 <- build_address("Calle Los Alerces", "número 123")
-direccion_2 <- build_address("Avenida Los Alerces", 456, departamento = "34")
+direccion_2 <- build_address("Avenida Los Alerces", 456, departamento = NULL)
 
 print(direccion_1)
 print(direccion_2)
+
+
+df <- tribble(~calle,              ~numero,      ~depto,
+              "calle Hemingway",   "num 345",    "depto. 345",
+              "av. Albert Camus",  "número 123", "123",
+              "Manuel Rojas",      "234",        "departamento 231",
+              "Nicanor Parra",     "678",        NULL
+) 
+df
+#Ejercicio 3
+df1<-build_address(df$calle,df$numero,df$depto)
