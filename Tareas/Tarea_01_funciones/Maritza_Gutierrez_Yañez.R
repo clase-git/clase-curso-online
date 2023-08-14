@@ -3,14 +3,32 @@
 library(tidyverse)
 library(stringr)
 
+
 #Ejercicio 1
 
 
-get_cv <- function(x){
+#OPCION 1, función que no remueve los valores NA 
+
+get_cv <- function(x,valor_na=FALSE){
+  n <- length(x)
+  cv <- ((sd(x,na.rm = valor_na)/mean(x,na.rm = valor_na))*100)
+  return(cv)
+}
+
+prueba <- c(1,5,8,NA,12,14)
+get_cv(prueba, TRUE) # hay que incorporar el TRUE para poder calcular el CV
+
+
+#OPCION 2, función que remueve los valores NA
+
+get_cv2 <- function(x){
   n <- length(x)
   cv <- ((sd(x,na.rm = TRUE)/mean(x,na.rm = TRUE))*100)
   return(cv)
 }
+
+get_cv2(prueba)
+
 
 
 
@@ -45,7 +63,7 @@ build_address(street,number)
 
 df <- tribble(~calle,              ~numero,      ~depto,
               "calle Hemingway",   "num 345",    "depto. 345",
-              "av. Albert Camus",  "n�mero 123", "123",
+              "av. Albert Camus",  "n?mero 123", "123",
               "Manuel Rojas",      "234",        "departamento 231",
               "Nicanor Parra",     "678",        NULL
 ) 
