@@ -26,7 +26,7 @@ Calle <- function(x) {
   partes <- strsplit(x, " ")
   if (partes[[1]][1]=="avenida"|partes[[1]][1]=="av."|partes[[1]][1]=="calle"
       |partes[[1]][1]=="Calle"|partes[[1]][1]=="Avenida"|partes[[1]][1]=="pasaje"
-      |partes[[1]][1]=="psje") {
+      |partes[[1]][1]=="psje"|partes[[1]][1]=="psje.") {
    C <- paste(partes[[1]][-1], collapse = " ") 
   }else{
    C <- paste(partes[[1]], collapse = " ")
