@@ -123,16 +123,21 @@ v1 <- 1:3
 v2 <- 5:8
 
 nested_map <- function(v1, v2) {
-  comb <- expand.grid(v1 = v1, v2 = v2) #Para generar todas las combinaciones posibles de v1 y v2
+  comb <- crossing(v1 = v1, v2 = v2) #Para generar todas las combinaciones posibles de v1 y v2
   map2(comb[["v1"]], comb[["v2"]], ~ paste(.x, .y)) # Para poder iterar sobre v1 y v2
 }
 
 result <- nested_map(v1, v2)
 result
 
+#or
+
+result_unlist <- unlist(result)
+result_unlist
+
 ### Reflexiona sobre la pertinencia de purrr para tareas de este tipo.
 # Respuesta: durante el desarrollo del ejercicio se determina mayor practicidad y facilidad 
-#            para ingresar argumentos con bucles "for" para el caso presentado. 
+#            para ingresar argumentos con bucles simples "for" para el caso presentado. 
 #            Al utilizar funciones del paquete "purrr" resulta dificultad
 #            al configurar iteración y restricción en longitud de vectores de distinto tamaño, 
 #            fue necesario código más largo y menos intuitivo.
