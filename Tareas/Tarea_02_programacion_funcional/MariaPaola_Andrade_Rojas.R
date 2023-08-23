@@ -115,7 +115,6 @@ nested_for(1:3, 5:8)
 
 ###### Modificación utilizando library(purrr)
 
-
 #Sean v1 y v2
 
 v1 <- 1:3
@@ -136,7 +135,7 @@ result_map <- nested_map(v1, v2)
 result_map
 
 
-#Visualizar pares de valores generados
+#Para visualizar pares de valores generados
 
 result_unlmap <- unlist(result_map)
 result_unlmap
