@@ -113,27 +113,33 @@ nested_for <- function(v1,v2) {
 
 nested_for(1:3, 5:8)
 
-######
+###### Modificación utilizando library(purrr)
 
-library(purrr)
-library(tidyr)
 
 #Sean v1 y v2
+
 v1 <- 1:3
 v2 <- 5:8
 
+library(purrr)
+
 nested_map <- function(v1, v2) {
-  comb <- crossing(v1 = v1, v2 = v2) #Para generar todas las combinaciones posibles de v1 y v2
-  map2(comb[["v1"]], comb[["v2"]], ~ paste(.x, .y)) # Para poder iterar sobre v1 y v2
+  map(v1, function(x) {
+    map(v2, function(y) {
+      paste(x, y)
+    })
+  }) %>%
+    flatten()
 }
 
-result <- nested_map(v1, v2)
-result
+result_map <- nested_map(v1, v2)
+result_map
 
-#or
 
-result_unlist <- unlist(result)
-result_unlist
+#Visualizar pares de valores generados
+
+result_unlmap <- unlist(result_map)
+result_unlmap
 
 ### Reflexiona sobre la pertinencia de purrr para tareas de este tipo.
 # Respuesta: durante el desarrollo del ejercicio se determina mayor practicidad y facilidad 
