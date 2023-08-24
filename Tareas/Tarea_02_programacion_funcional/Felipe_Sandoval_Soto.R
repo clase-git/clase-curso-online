@@ -21,7 +21,7 @@ gapminder_list <- split(gapminder, gapminder$year)
 plot_with_purrr <- function(tablas) {
   plots <- map(tablas, ~ {
     table <- sum_something(.x, continent, pop)
-    plot_table(table, continent, n, paste("Poblacion mundial, segun continente. A?o", .x$year[1]))
+    plot_table(table, continent, n, paste("Población mundial, según continente. Año", .x$year[1]))
     })
   return(plots)
 }
@@ -39,7 +39,7 @@ plot_table2 <- function(table, x_var, y_var,  input_title, input_subtitle ) {
 plot_with_purrr2 <- function(tablas) {
   plots <- map(tablas, ~ {
     table <- sum_something(.x, continent, pop)
-    plot_table2(table, continent, n,"Poblacion mundial, segun continente.",paste("A?o",.x$year[1]))
+    plot_table2(table, continent, n,"Población mundial, según continente.",paste("Año",.x$year[1]))
   })
   return(plots)
 }
