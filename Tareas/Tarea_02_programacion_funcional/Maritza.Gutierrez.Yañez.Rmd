@@ -1,0 +1,24 @@
+---
+title: "Gráficos Tarea 2"
+output: pdf_document
+---
+
+
+
+## Gráficos Bonus 
+
+
+```{r pressure, echo = FALSE, eval = TRUE, results = "asis", warning=FALSE}
+library(purrr)
+library(ggplot2)
+
+plots <- list.files(pattern = "\\.jpg")
+
+walk(plots, ~{
+  img_path <- file.path(getwd(), .)
+  cat("![Gráfico](", img_path, "){width=10cm height=10cm} \n\n")
+})
+
+
+```
+
