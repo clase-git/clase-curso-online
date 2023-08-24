@@ -61,12 +61,12 @@ nested_purrr <- function(v1, v2) {
   v<-map(v,print)
 }
 
-nested_purrr_v2 <- function(v1, v2) {
+nested_map <- function(v1, v2) {
   v<-expand_grid(v1,v2) %>% pmap_chr(paste)
   v<-map(v,print)
 }
 
 nested_for(1:3, 5:8) 
 nested_purrr(1:3, 5:8)
-nested_purrr_v2(1:3, 5:8) 
+nested_map(1:3, 5:8) 
 
