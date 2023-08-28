@@ -24,12 +24,12 @@ str(casen2020_df, list.len=ncol(casen2020_df))
 #4. Selección de módulos, columnas contienen "ocupación" y "vivienda".
 # Referencias: "Cuestionario Casen Pandemia 2020" y "Libro de Códigos Casen 2020".
 
-var_ocup_viv <- "^(o[0-9]|o[0-9]{2}|o[0-9][a-z]|o[0-9]{2}[a-z]|o[0-9]_[a-z]{3}|o[0-9]{2}_[a-z]{3}|ocup_inf|v[0-9]|v[0-9]{2}||v[0-9]_casa|v[0-9]_depto|v[0-9]_propia||v[0-9]_arrendada||v[0-9]_cedida|v[0-9]_preg|v[0-9]{2}_cajon|v[0-9]_sistema|v[0-9]{2}_sistema)$"
+var_ocup_viv <- "^(o[0-9]|o[0-9]{2}|o[0-9][a-z]|o[0-9]{2}[a-z]|o[0-9]_[a-z]{3}|o[0-9]{2}_[a-z]{3}|activ|activ[0-9]|rama[0-9]|rama[0-9]_rev[0-9]|ocup_inf|oficio[0-9]_88|oficio[0-9]_08|v[0-9]|v[0-9]{2}|v[0-9]_casa|v[0-9]_depto|v[0-9]{2}_propia|v[0-9]{2}_esp|v[0-9]{2}_arrendada|v[0-9]{2}_cedida|v[0-9]{2}_preg|v[0-9]{2}_cajon|v[0-9]{2}_red|v[0-9]_sistema|v[0-9]{2}_sistema)$"
 
-tabla_ocup_viv <- casen2020_df %>%
+tablamod_ocup_viv <- casen2020_df %>%
   select(matches(var_ocup_viv))
 
-str(tabla_ocup_viv)
+names(tablamod_ocup_viv)
 
 #######################
 ##### EJERCICIO 2 #####
