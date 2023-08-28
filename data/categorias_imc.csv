@@ -1,0 +1,9 @@
+Categoría,IMC (kg/m²),Peso corporal
+Delgadez severa,"<16,0",Bajo peso
+Delgadez moderada,"16,0 - 17,0",Bajo peso
+Delgadez leve,"17,0 - 18,5",Bajo peso
+Peso normal,"18,5 - 24,9",Peso normal
+Pre-obeso,"25,0 - 29,9",Sobrepeso
+Obesidad tipo I,"30,0 - 34,9",Obesidad
+Obesidad tipo II,"35,0 - 39,9",Obesidad
+Obesidad tipo III,≥ 40,Obesidad
