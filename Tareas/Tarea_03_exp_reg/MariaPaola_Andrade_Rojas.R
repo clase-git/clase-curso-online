@@ -10,7 +10,7 @@ library(dplyr)
 
 #1. Ruta absoluta para trabajo con computador personal (bbdd enviada por Teams):
 
-setwd("C:/Users/ASUS Zenbook 14/Desktop/INE/Curso R INE 2023/Tarea 3")  
+#setwd("C:/Users/ASUS Zenbook 14/Desktop/INE/Curso R INE 2023/Tarea 3")  
 
 #2. Conversión de bbdd a dataframe para facilitar detección de patrones solicitados
 
