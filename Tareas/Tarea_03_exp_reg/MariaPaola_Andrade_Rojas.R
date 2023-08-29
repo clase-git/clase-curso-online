@@ -17,7 +17,7 @@ library(dplyr)
 casen2020 <- read_feather("casen_2020_edit.feather")
 casen2020_df <- as.data.frame(casen2020)
 
-#3. Para visualizar y corroborar variables a seleccionar
+#3. Para visualizar y corroborar variables a seleccionar:
 
 str(casen2020_df, list.len=ncol(casen2020_df))
 
