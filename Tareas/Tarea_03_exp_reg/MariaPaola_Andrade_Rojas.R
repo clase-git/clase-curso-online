@@ -10,14 +10,14 @@ library(dplyr)
 
 #1. Ruta absoluta para trabajo con computador personal (bbdd enviada por Teams):
 
-setwd("C:/Users/ASUS Zenbook 14/Desktop/INE/Curso R INE 2023/Tarea 3")  
+#setwd("C:/Users/ASUS Zenbook 14/Desktop/INE/Curso R INE 2023/Tarea 3")  
 
 #2. Conversión de bbdd a dataframe para facilitar detección de patrones solicitados
 
 casen2020 <- read_feather("casen_2020_edit.feather")
 casen2020_df <- as.data.frame(casen2020)
 
-#3. Para visualizar y corroborar variables a seleccionar
+#3. Para visualizar y corroborar variables a seleccionar:
 
 str(casen2020_df, list.len=ncol(casen2020_df))
 
