@@ -4,7 +4,7 @@
 source("func.R")
 
 # Llamar a la función calcular_promedio
-resultado <- calcular_promedio(mtcars$hp)
+resultado <- calcular_promedio(mtcars)
 
 # Imprimir el resultado
-cat("El promedio de ingresos es:", resultado, "\n")
+cat("El promedio de hp es:", resultado, "\n")
