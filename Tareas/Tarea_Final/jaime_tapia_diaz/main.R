@@ -104,8 +104,9 @@ tabla_3.1[]
 # ------ F(x)  Tabla 3.2 --------------------------------------------------------------------------------------------------------------------
 # Tabla que contenga mínimo, máximo, media, mediana, p10 y p90 del factor de expansión (fact_cal_esi) para cada versión.
 # Debes considerar una fila por hogar (id_identificacion) e incluir la columna version.
+
 # ¿Se observan algunos pesos de muestreo atípicos?
-# R. A pesar que los dos ultimos años (2020 y 2021) tengan un maximo mucho menor a los años anteriores, el que destaca es el 2020.
+# R. A pesar que los dos últimos años (2020 y 2021) presentan un máximo mucho menor a los años anteriores, el que destaca es el 2020.
 #    Ya que su media, mediana, p10 y p90 sobresalen por mucho al resto de los años.
 
 tabla_3.2 <- esi_data[] %>% 
@@ -204,7 +205,9 @@ results   # muestra resultados
 #    rápidos que los demás (2 y 4). Por lo general, la diferencia de tiempo ronda el 60%.
 
 # ¿Hay alguna más eficiente que otra?
-# R. Por lo general, el método 1 (puramente "purrr") fue más veloz que los demás, pero con poca diferencia respecto al método 3 ("purrr" y "data.table").  
+# R. Por lo general, el método 1 (puramente "purrr") fue más veloz que los demás, pero con poca diferencia respecto al método 3 ("purrr" y "data.table").
+# AVISO: La respuesta anterior es válida en mi PC personal en casa (Procesador AMD).
+#        Hoy probé el algoritmo en el PC del INE (Procesador INTEL), el método 3 fue el más rápido, pero tambien con poca diferencia. 
 
 # ¿Usar group_by versus map hace alguna diferencia?
 # R. De acuerdo a lo observado, existe una gran disparidad entre "group_by" (método 2) y "map" (métodos 1 y 3).
