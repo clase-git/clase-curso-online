@@ -170,7 +170,7 @@ tabla_estadisticas <- combined_data %>%
 
 # Mostrar la tabla de estadísticas
 print(tabla_estadisticas)
-
+View
 
 
 
