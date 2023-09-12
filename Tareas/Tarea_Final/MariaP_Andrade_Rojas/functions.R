@@ -191,5 +191,3 @@ benchmark_result <- microbenchmark(
   dt = calcular_promedio(datos)$dt, 
   unit = "ms", 
   times = 5)
-
-print(benchmark_result)
