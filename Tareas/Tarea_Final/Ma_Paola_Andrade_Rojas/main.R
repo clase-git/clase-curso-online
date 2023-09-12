@@ -27,7 +27,7 @@ library(data.table)
 setwd(here())
 getwd()
 script_dir <- here()
-#source(file.path(script_dir, "functions.R"))
+#source(file.path(script_dir, "functions.R")) #como alternativa si no carga source
 source("functions.R")
 
 ##### EJERCICIO 1: descargar archivos #####
