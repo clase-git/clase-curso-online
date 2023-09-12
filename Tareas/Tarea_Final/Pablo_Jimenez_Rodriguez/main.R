@@ -172,10 +172,10 @@ print(comparar_pruebas)
 
 #¿Existen diferencias importantes entre las distintas estrategias? 
 # NO SE VE MUCHA DIFERENCIA ENTRE LAS DISTINTAS ESTRATEGIAS, PERO LA PRUEBA 2 Y 3 SON UN POCO MAS EFICIENTES QUE LAS DEMAS
-# SE MEZCLA DATA.TABLE CON MAP Y GROUP_BY
+# SE MEZCLA DATA.TABLE CON MAP Y GROUP_BY.
 
 #¿Hay alguna más eficiente que otra? 
-# LA MÁS EFICIENTE ES LA QUE UTILICÉ PURRR CON DATA.TABLE  QUE ES LA PRUEBA 3 
+# LA MÁS EFICIENTE ES LA QUE UTILICÉ PURRR CON DATA.TABLE  QUE ES LA PRUEBA 3. 
 
 #¿Usar group_by versus map hace alguna diferencia?
-# map fue más eficiente que group_by pero por poca diferencia
+# map fue más eficiente que group_by pero por poca diferencia.
