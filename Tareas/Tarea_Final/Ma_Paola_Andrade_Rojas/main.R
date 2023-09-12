@@ -30,6 +30,7 @@ script_dir <- here()
 #source(file.path(script_dir, "functions.R")) #como alternativa si no carga source
 source("functions.R")
 
+
 ##### EJERCICIO 1: descargar archivos #####
 
 ##### 1.1 #####
