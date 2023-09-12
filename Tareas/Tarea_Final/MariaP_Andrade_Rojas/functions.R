@@ -180,7 +180,7 @@ archivos <- c("data/esi-2016-personas.csv",
 
 
 #Cargar archivos especificando tipos de columna
-datos <- map(archivos, ~ read_csv(.x, col_types = cols(.default = "d")))  # "d"=tipo numérico
+datos <- map(archivos, ~ read_csv(.x, col_types = cols(.default = "d"))) # "d"=tipo numérico
 
 #Promedio y comparar tiempo de ejecución
 
