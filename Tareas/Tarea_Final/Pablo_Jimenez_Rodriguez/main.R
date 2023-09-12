@@ -3,6 +3,11 @@ if(!require("stringr")){
   library(dplyr)
 } 
 
+if(!require("xfun")){
+  install.packages("xfun")
+  library(xfun)
+} 
+
 if(!require("dplyr")){
   install.packages("dplyr")
   library(dplyr)
@@ -57,6 +62,7 @@ file_names <- map_chr(urls, extract_name)
 #CREAMOS CARPETA DATA
 carpeta<-dir.create("data")
 #DESCARGAMOS ARCHIVOS EN CARPETA
+
 descarga<-map(urls,funcion_descarga)
 
 
