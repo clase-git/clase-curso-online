@@ -55,7 +55,7 @@ directory <- "data_esi2016"
 
 file_names <- c("esi-2016-personas.csv")
 
-download_esi_data(urls[1], file_names[1], directory)
+download_esi_data(urls[6], file_names[6], directory)
 
 
 ##### 1.3 #####
@@ -104,7 +104,7 @@ tabla_procesada
 ##### 3.2 #####
 
 #Listar archivos que coinciden con el patrón ESI
-archivos <- list.files(path = "data/", pattern = "esi-\\d{4}-personas.csv", full.names = TRUE)
+archivos <- list.files(path = "data_esi/", pattern = "esi-\\d{4}-personas.csv", full.names = TRUE)
 
 resultados <- lapply(archivos, estadisticas_descriptivas)
 

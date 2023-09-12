@@ -9,26 +9,41 @@
 
 ############# PARTE 1.1 #################
 
-# Archivo "functions.R"
+#Encontrar nombres dentro de URLs y descargar archivos
 
 extract_name <- function(urls) {
-  year <- sub(".*/(\\d{4})/.*", "\\1", urls) #Regex para extraer el año
-  result <- paste0("esi-", year, "-personas.csv") #Combinamos "año" con nombre del archivo
-  result <- iconv(result, to = "UTF-8", sub = "byte") # Convierte a UTF-8, tuve problemas con guiones largos
+  year <- sub(".*/(\\d{4})/.*", "\\1", urls) # Expresión regular para extraer el año
+  result <- paste0("esi-", year, "-personas.csv") # Combina "año" con nombre del archivo
+  result <- iconv(result, to = "UTF-8", sub = "byte") # Convierte a UTF-8
   return(result)
 }
 
-download_esi_data <- function(urls, file_names, directory) {
+archivos_descarga <- c(
+  "https://www.ine.cl/docs/default-source/encuesta-suplementaria-de-ingresos/bbdd/csv_esi/2021/esi-2021---personas.csv?sfvrsn=d03ae552_4&download=true",
+  "https://www.ine.cl/docs/default-source/encuesta-suplementaria-de-ingresos/bbdd/csv_esi/2020/esi-2020---personas.csv?sfvrsn=fb1f7e0c_4&download=true",
+  "https://www.ine.cl/docs/default-source/encuesta-suplementaria-de-ingresos/bbdd/csv_esi/2019/esi-2019---personas.csv?sfvrsn=9eb52870_8&download=true",
+  "https://www.ine.cl/docs/default-source/encuesta-suplementaria-de-ingresos/bbdd/csv_esi/2018/esi-2018---personas.csv?sfvrsn=a5de2b27_6&download=true",
+  "https://www.ine.cl/docs/default-source/encuesta-suplementaria-de-ingresos/bbdd/csv_esi/2017/esi-2017---personas.csv?sfvrsn=d556c5a1_6&download=true",
+  "https://www.ine.cl/docs/default-source/encuesta-suplementaria-de-ingresos/bbdd/csv_esi/2016/esi-2016---personas.csv?sfvrsn=81beb5a_6&download=true"
+)
+
+download_esi_data <- function(urls, directory) {
   if (!dir.exists(directory)) {
     dir.create(directory, recursive = TRUE)
   }
   
-  for (i in 1:length(urls)) {
-    full_path <- file.path(directory, file_names[i])
-    curl_download(urls[i], destfile = full_path)
+  for (url in urls) {
+    # Reemplazar caracteres inválidos en el nombre del archivo
+    file_name <- gsub("[/\\?%*:|\"<>]", "_", basename(url))
+    full_path <- file.path(directory, file_name)
+    curl_download(url, destfile = full_path)
     cat("Archivo descargado en carpeta:", full_path, "\n")
   }
 }
+
+# Llama a la función para descargar los archivos
+download_esi_data(archivos_descarga, "data_esi")
+
 
 
 ########################################
@@ -171,12 +186,12 @@ calcular_promedio <- function(datos) {
 
 #Archivos a procesar 
 
-archivos <- c("data/esi-2016-personas.csv",
-              "data/esi-2017-personas.csv",  
-              "data/esi-2018-personas.csv",
-              "data/esi-2019-personas.csv",
-              "data/esi-2020-personas.csv",
-              "data/esi-2021-personas.csv")
+archivos <- c(here("data_esi/esi-2021-personas.csv"),
+              here("data_esi/esi-2020-personas.csv"),
+              here("data_esi/esi-2019-personas.csv"),
+              here("data_esi/esi-2018-personas.csv"),
+              here("data_esi/esi-2017-personas.csv"),
+              here("data_esi/esi-2016-personas.csv"))
 
 
 #Cargar archivos especificando tipos de columna
