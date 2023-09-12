@@ -9,30 +9,27 @@
 
 ############# PARTE 1.1 #################
 
-#Función extract_name para extraer nombre de archivo:
+# Archivo "functions.R"
 
-extract_name <- function(url) 
-  {
-  year <- sub(".*/(\\d{4})/.*", "\\1", url) #Expresión regular para extraer año
-  result <- paste0("esi-", year, "—personas.csv") #Combina "año" con nombre del archivo
+extract_name <- function(urls) {
+  year <- sub(".*/(\\d{4})/.*", "\\1", urls) # Expresión regular para extraer el año
+  result <- paste0("esi-", year, "-personas.csv") # Combina "año" con nombre del archivo
+  result <- iconv(result, to = "UTF-8", sub = "byte") # Convierte a UTF-8
   return(result)
 }
 
-############# PARTE 1.2 y 1.3 ###########
-
-#Función para descarga de archivos desde URLs
-
-download_esi_data <- function(url, file_name, directory) {
-  
-  if (!dir.exists(directory)) #Verifica si existe directorio
-    {
-    dir.create(directory, recursive = TRUE) #Crea directorio
-    }
-  
-  full_path <- file.path(directory, file_name) 
-  curl_download(url, destfile = full_path) #Descarga y guarda archivo
-  cat("Archivo descargado en carpeta:", full_path, "\n") #Mensaje de descarga una vez finalizada
+download_esi_data <- function(urls, file_names, directory) {
+  if (!dir.exists(directory)) {
+    dir.create(directory, recursive = TRUE)
   }
+  
+  for (i in 1:length(urls)) {
+    full_path <- file.path(directory, file_names[i])
+    curl_download(urls[i], destfile = full_path)
+    cat("Archivo descargado en carpeta:", full_path, "\n")
+  }
+}
+
 
 
 ########################################
@@ -44,14 +41,14 @@ download_esi_data <- function(url, file_name, directory) {
 read_esi_data <- function(file_path) {
   tryCatch(
     {
-      data <- readr::read_delim(file_path, delim = ",") #Leer con comas como separador
+      data <- read_delim(file_path, delim = ",") #Leer con comas como separador
       return(data)
     },
     error = function(e) {
     
       tryCatch(
         {
-          data <- readr::read_delim(file_path, delim = ";") #Si hay error intento con punto y coma
+          data <- read_delim(file_path, delim = ";") #Si hay error intento con punto y coma
           return(data)
         },
         error = function(e2) {
@@ -94,24 +91,26 @@ estadisticas_descriptivas <- function(archivo_path) {
   datos <- read.csv(archivo_path)
   version <- str_extract(basename(archivo_path), "\\d{4}") #Extraer año archivo ESI personas
   datos$version <- version
+}
   
 #Agrupar por "id_identificacion" y "version" y calcular estadísticas descriptivas para "fact_cal_esi"
+  
   
   estadisticas <- datos %>%
     group_by(id_identificacion, version) %>%
     summarise(
-      min_fact_cal_esi = min(fact_cal_esi),
-      max_fact_cal_esi = max(fact_cal_esi),
-      media_fact_cal_esi = mean(fact_cal_esi),
-      mediana_fact_cal_esi = median(fact_cal_esi),
-      p10_fact_cal_esi = quantile(fact_cal_esi, 0.10),
-      p90_fact_cal_esi = quantile(fact_cal_esi, 0.90)
+      min_fact_cal_esi = min(fact_cal_esi, na.rm = TRUE),
+      max_fact_cal_esi = max(fact_cal_esi, na.rm = TRUE),
+      media_fact_cal_esi = mean(fact_cal_esi, na.rm = TRUE),
+      mediana_fact_cal_esi = median(fact_cal_esi, na.rm = TRUE),
+      p10_fact_cal_esi = quantile(fact_cal_esi, 0.10, na.rm = TRUE),
+      p90_fact_cal_esi = quantile(fact_cal_esi, 0.90, na.rm = TRUE)
     )
+  
   return(estadisticas)
-}
-
+  
 #Listar archivos que coinciden con el patrón ESI
-archivos <- list.files(path = "data/", pattern = "esi-\\d{4}—personas.csv", full.names = TRUE)
+archivos <- list.files(path = "data/", pattern = "esi-\\d{4}-personas.csv", full.names = TRUE)
 
 resultados <- lapply(archivos, estadisticas_descriptivas)
 
@@ -183,34 +182,27 @@ calcular_promedio <- function(datos)
   promedio_dt <- as.data.table(datos) %>%
     .[, .(promedio = mean(ing_t_p, na.rm = TRUE))]
   
-  return(list(purrr = promedio_purrr, apilado = promedio_apilado, purrr_dt = promedio_purrr_dt, dt = promedio_dt))
-}
-
+  return(list(purrr = promedio_purrr, apilado = promedio_apilado, purrr_dt = promedio_purrr_dt, dt = promedio_dt))}
 #Archivos a procesar 
 
-archivos <- c("data/esi-2016—personas.csv",
-              "data/esi-2017—personas.csv",  
-              "data/esi-2018—personas.csv",
-              "data/esi-2019—personas.csv",
-              "data/esi-2020—personas.csv",
-              "data/esi-2021—personas.csv")
+archivos <- c("data/esi-2016-personas.csv",
+              "data/esi-2017-personas.csv",  
+              "data/esi-2018-personas.csv",
+              "data/esi-2019-personas.csv",
+              "data/esi-2020-personas.csv",
+              "data/esi-2021-personas.csv")
 
 
 #Cargar archivos especificando tipos de columna
-datos <- map(archivos, ~ read_csv(.x, col_types = cols(.default = "d")))  # "d" = tipo numérico
+datos <- map(archivos, ~ read_csv(.x, col_types = cols(.default = "d")))  # "d"=tipo numérico
 
 #Promedio y comparar tiempo de ejecución
-
 benchmark_result <- microbenchmark(
-  purrr = calcular_promedio(datos)$purrr,
-  apilado = calcular_promedio(datos)$apilado,
-  purrr_dt = calcular_promedio(datos)$purrr_dt,
-  dt = calcular_promedio(datos)$dt,
-  unit = "ms",  #timing
-  times = 5  #iteraciones
-)
+  purrr = calcular_promedio(datos)$purrr, 
+  apilado = calcular_promedio(datos)$apilado, 
+  purrr_dt = calcular_promedio(datos)$purrr_dt, 
+  dt = calcular_promedio(datos)$dt, 
+  unit = "ms", 
+  times = 5)
 
 benchmark_result
-
-
-
