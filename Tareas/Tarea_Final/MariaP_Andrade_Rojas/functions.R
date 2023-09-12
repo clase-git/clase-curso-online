@@ -12,9 +12,9 @@
 # Archivo "functions.R"
 
 extract_name <- function(urls) {
-  year <- sub(".*/(\\d{4})/.*", "\\1", urls) # Expresión regular para extraer el año
-  result <- paste0("esi-", year, "-personas.csv") # Combina "año" con nombre del archivo
-  result <- iconv(result, to = "UTF-8", sub = "byte") # Convierte a UTF-8
+  year <- sub(".*/(\\d{4})/.*", "\\1", urls) #Regex para extraer el año
+  result <- paste0("esi-", year, "-personas.csv") #Combinamos "año" con nombre del archivo
+  result <- iconv(result, to = "UTF-8", sub = "byte") # Convierte a UTF-8, tuve problemas con guiones largos
   return(result)
 }
 
@@ -31,12 +31,11 @@ download_esi_data <- function(urls, file_names, directory) {
 }
 
 
-
 ########################################
 ###### EJERCICIO 2: LEER ARCHIVOS ######
 ########################################
 
-### Crear función que lea un archivo ESI ###
+### Función que lea un archivo ESI ###
 
 read_esi_data <- function(file_path) {
   tryCatch(
@@ -48,7 +47,7 @@ read_esi_data <- function(file_path) {
     
       tryCatch(
         {
-          data <- read_delim(file_path, delim = ";") #Si hay error intento con punto y coma
+          data <- read_delim(file_path, delim = ";") #Si hay error intentará con punto y coma
           return(data)
         },
         error = function(e2) {
@@ -74,8 +73,7 @@ procesar_archivo <- function(archivo_path) {
   datos_renombrados <- datos %>%
     rename(n_personas = idrph, n_hogares = id_identificacion)
   
-  #Agregar columna "version" con estructura esi_{año} o "desconocido" si no puede extraer año
-  datos_renombrados$version <- ifelse(!is.na(version), version, "Desconocido")
+  datos_renombrados$version <- ifelse(!is.na(version), version, "Desconocido") #Agregar columna "version" con estructura esi_{año} o "desconocido" si no puede extraer año
   
   datos_seleccionados <- datos_renombrados %>%
     select(version, n_personas, n_hogares)
@@ -83,20 +81,17 @@ procesar_archivo <- function(archivo_path) {
   return(datos_seleccionados)
 }
 
+
 ######## PARTE 3.2 ########
 
-#Crear función para calcular las estadísticas descriptivas
+# Cálculo de estadísticas descriptivas
 
-estadisticas_descriptivas <- function(archivo_path) {
-  datos <- read.csv(archivo_path)
-  version <- str_extract(basename(archivo_path), "\\d{4}") #Extraer año archivo ESI personas
-  datos$version <- version
-}
+estadisticas_descriptivas <- function(archivo_path, datos) {
+  datos_lectura <- read.csv(archivo_path)
+  version <- str_extract(basename(archivo_path), "\\d{4}") # Extraer año archivo ESI personas
+  datos_lectura$version <- version
   
-#Agrupar por "id_identificacion" y "version" y calcular estadísticas descriptivas para "fact_cal_esi"
-  
-  
-  estadisticas <- datos %>%
+  estadisticas <- datos_lectura %>%
     group_by(id_identificacion, version) %>%
     summarise(
       min_fact_cal_esi = min(fact_cal_esi, na.rm = TRUE),
@@ -104,27 +99,19 @@ estadisticas_descriptivas <- function(archivo_path) {
       media_fact_cal_esi = mean(fact_cal_esi, na.rm = TRUE),
       mediana_fact_cal_esi = median(fact_cal_esi, na.rm = TRUE),
       p10_fact_cal_esi = quantile(fact_cal_esi, 0.10, na.rm = TRUE),
-      p90_fact_cal_esi = quantile(fact_cal_esi, 0.90, na.rm = TRUE)
+      p90_fact_cal_esi = quantile(fact_cal_esi, 0.90, na.rm = TRUE),
+      .groups = 'drop' # Desagrupa resultados
     )
   
   return(estadisticas)
-  
-#Listar archivos que coinciden con el patrón ESI
-archivos <- list.files(path = "data/", pattern = "esi-\\d{4}-personas.csv", full.names = TRUE)
+}
 
-resultados <- lapply(archivos, estadisticas_descriptivas)
-
-#Combinar resultados en un solo dataframe
-tabla_df <- do.call(rbind, resultados)
-
-#Registros únicos por "id_identificacion" y "version"
-tabla_final <- unique(tabla_df, by = c("id_identificacion", "version"))
-tabla_final
 
 
 ######## PARTE 3.3 ########
 
 tabla_estratos <- function(archivo_path, version) {
+  
   datos <- read.csv(archivo_path)
   datos$version <- version # Agregar columna "version"
   
@@ -144,8 +131,7 @@ tabla_estratos <- function(archivo_path, version) {
 
 ######## PARTE 3.4 ########
 
-generar_tabla_estadistica <- function(archivo_path, version) 
-  {
+generar_tabla_estadistica <- function(archivo_path, version) {
   datos <- read.csv(archivo_path)
   datos$version <- version #agrega columna "version"
   
@@ -167,8 +153,7 @@ generar_tabla_estadistica <- function(archivo_path, version)
 
 #Cálculo del promedio de ingresos
 
-calcular_promedio <- function(datos) 
-  {
+calcular_promedio <- function(datos) {
   promedio_purrr <- datos %>%
     map_dbl(~ mean(.$ing_t_p, na.rm = TRUE))
   
@@ -183,6 +168,7 @@ calcular_promedio <- function(datos)
     .[, .(promedio = mean(ing_t_p, na.rm = TRUE))]
   
   return(list(purrr = promedio_purrr, apilado = promedio_apilado, purrr_dt = promedio_purrr_dt, dt = promedio_dt))}
+
 #Archivos a procesar 
 
 archivos <- c("data/esi-2016-personas.csv",
@@ -197,6 +183,7 @@ archivos <- c("data/esi-2016-personas.csv",
 datos <- map(archivos, ~ read_csv(.x, col_types = cols(.default = "d")))  # "d"=tipo numérico
 
 #Promedio y comparar tiempo de ejecución
+
 benchmark_result <- microbenchmark(
   purrr = calcular_promedio(datos)$purrr, 
   apilado = calcular_promedio(datos)$apilado, 
@@ -205,4 +192,4 @@ benchmark_result <- microbenchmark(
   unit = "ms", 
   times = 5)
 
-benchmark_result
+print(benchmark_result)
