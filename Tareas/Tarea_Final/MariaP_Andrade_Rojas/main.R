@@ -1,5 +1,4 @@
 
-
 ####### Determinar paquetes a instalar si no están en equipo #######
 
 paquetes <- c("here", "purrr", "stringr", "dplyr", "readr", "curl", "outliers", "microbenchmark", "data.table")
@@ -11,6 +10,7 @@ paquetes_a_instalar <- paquetes[!sapply(paquetes, requireNamespace, quietly = TR
 if (length(paquetes_a_instalar) > 0) {
   install.packages(paquetes_a_instalar)
 }
+
 
 #Cargar paquetes
 library(here)
