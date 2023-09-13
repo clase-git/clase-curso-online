@@ -12,9 +12,9 @@ if (length(paquetes_a_instalar) > 0) {
   install.packages(paquetes_a_instalar)
 }
 
-
 #Cargar paquetes
 library(here)
+library(httr)
 library(purrr)
 library(stringr)
 library(dplyr)
@@ -27,13 +27,29 @@ library(data.table)
 setwd(here())
 getwd()
 script_dir <- here()
-#source(file.path(script_dir, "functions.R")) #como alternativa si no carga source
-source("functions.R")
+#source(file.path(script_dir, "functions.R"))
 
+##Objeto "archivo" para ejercicio 4 (queda en pausa, se carga al final pero se define antes para no obstaculizar proceso, arroja error) ##
+
+archivos <- c("data_esi/esi-2021-personas.csv",
+              "data_esi/esi-2020-personas.csv",
+              "data_esi/esi-2019-personas.csv",
+              "data_esi/esi-2018-personas.csv",
+              "data_esi/esi-2017-personas.csv",
+              "data_esi/esi-2016-personas.csv")
 
 ##### EJERCICIO 1: descargar archivos #####
 
 ##### 1.1 #####
+extract_name <- function(urls) {
+  
+  file_names <- gsub(".*/([^?]+)\\?.*", "\\1", urls)
+  file_names <- gsub("[[:space:]\\\\/:*?\"<>|]", "_", file_names)
+  file_names <- gsub("-+", "-", file_names)
+  file_names <- gsub("^-|-$", "", file_names)
+  file_names <- tolower(file_names)
+  return(file_names)
+}
 
 urls <- c(
   "https://www.ine.cl/docs/default-source/encuesta-suplementaria-de-ingresos/bbdd/csv_esi/2021/esi-2021---personas.csv?sfvrsn=d03ae552_4&download=true",
@@ -44,18 +60,15 @@ urls <- c(
   "https://www.ine.cl/docs/default-source/encuesta-suplementaria-de-ingresos/bbdd/csv_esi/2016/esi-2016---personas.csv?sfvrsn=81beb5a_6&download=true")
 
 file_names <- map_chr(urls, extract_name)
-file_names
-
+print(file_names)
 
 ##### 1.2 #####
 
-#Descarga de un solo archivo "esi-2016-personas.csv"
-
-directory <- "data_esi2016"
-
-file_names <- c("esi-2016-personas.csv")
-
-download_esi_data(urls[1], file_names[1], directory)
+#Descargar un solo archivo "esi-2021-personas.csv"
+source("functions.R")
+directory <- "data_esi2021"
+file_name <- c("esi-2021-personas.csv")
+download_esi_data(urls[1], file_name, directory)
 
 
 ##### 1.3 #####
@@ -66,20 +79,25 @@ urls <- c(
   "https://www.ine.cl/docs/default-source/encuesta-suplementaria-de-ingresos/bbdd/csv_esi/2019/esi-2019---personas.csv?sfvrsn=9eb52870_8&download=true",
   "https://www.ine.cl/docs/default-source/encuesta-suplementaria-de-ingresos/bbdd/csv_esi/2018/esi-2018---personas.csv?sfvrsn=a5de2b27_6&download=true",
   "https://www.ine.cl/docs/default-source/encuesta-suplementaria-de-ingresos/bbdd/csv_esi/2017/esi-2017---personas.csv?sfvrsn=d556c5a1_6&download=true",
-  "https://www.ine.cl/docs/default-source/encuesta-suplementaria-de-ingresos/bbdd/csv_esi/2016/esi-2016---personas.csv?sfvrsn=81beb5a_6&download=true"
-)
+  "https://www.ine.cl/docs/default-source/encuesta-suplementaria-de-ingresos/bbdd/csv_esi/2016/esi-2016---personas.csv?sfvrsn=81beb5a_6&download=true")
 
 file_names <- c(
-  "esi-2016-personas.csv",
-  "esi-2017-personas.csv",
-  "esi-2018-personas.csv",
-  "esi-2019-personas.csv",
+  "esi-2021-personas.csv",
   "esi-2020-personas.csv",
-  "esi-2021-personas.csv")
+  "esi-2019-personas.csv",
+  "esi-2018-personas.csv",
+  "esi-2017-personas.csv",
+  "esi-2016-personas.csv")
 
-directory <- "data_esi" #Genera carpeta "data_esi" en directorio
+directory2 <- "data_esi" #Genera carpeta "data_esi" en directorio
+download_esi_data(urls[1], file_names[1], directory2)
+download_esi_data(urls[2], file_names[2], directory2)
+download_esi_data(urls[3], file_names[3], directory2)
+download_esi_data(urls[4], file_names[4], directory2)
+download_esi_data(urls[5], file_names[5], directory2)
+download_esi_data(urls[6], file_names[6], directory2)
+#map2(urls, file_names, ~download_esi_data(.x, .y, directory2)) #Descarga todos los archivos en "data_esi"
 
-map2(urls, file_names, ~download_esi_data(.x, .y, directory)) #Descarga todos los archivos en "data_esi"
 
 
 ##### EVALUACIÓN EJERCICIO 2: lectura de un archivo #####
@@ -104,9 +122,8 @@ tabla_procesada
 ##### 3.2 #####
 
 #Listar archivos que coinciden con el patrón ESI
-archivos <- list.files(path = "data/", pattern = "esi-\\d{4}-personas.csv", full.names = TRUE)
-
-resultados <- lapply(archivos, estadisticas_descriptivas)
+archivo <- list.files(path = "data_esi/", pattern = "esi-\\d{4}-personas.csv", full.names = TRUE)
+resultados <- lapply(archivo, estadisticas_descriptivas)
 
 #Combinar resultados en un solo dataframe
 tabla_df <- do.call(rbind, resultados)
@@ -177,13 +194,13 @@ print(benchmark_result)
 # Según resultados obtenidos vía benchmark, se observan diferencias importantes conforme al equipo utilizado y la versión de R instalada. 
 
 #¿Hay alguna más eficiente que otra? 
-#El método 1 (lista de tablas + purrr) resultó ser el más eficiente en notebook personal utilizado (R 4.3.1) para realizar
+#El método 2 (tablas apiladas) resultó ser el más eficiente en notebook personal utilizado (R 4.3.1) para realizar
 #la tarea final. Por otro lado, al evaluar mismos script en computador institucional (equipo de escritorio, más antiguo)
 #fue el método 4 (tablas apiladas + data.table) resultó más eficiente (R 4.1.3). 
 
 #¿Usar group_by versus map hace alguna diferencia?
 #Se observa que la elección entre herramientas group_by y/o map dependerá de la estructura de los datos, operaciones, capacidades del equipo y versión de R. 
-#En mi experiencia, si tenemos un set de datos grande y necesitamos realizar operaciones en grupos "group_by" (como summarise) debería ser más eficiente.
-#Por otra parte, si tenemos múltiples dataframes independientes y no de gran tamaño, y queremos aplicar la misma operación a cada uno, "map" debería funcionar mejor.
+#En mi experiencia, si tenemos un set de datos grande (como en el caso de esta tarea) y necesitamos realizar operaciones en grupos "group_by" (como summarise)
+#debería ser más eficiente (como el método 2 según resultado benchmark). Por otra parte, si tenemos múltiples dataframes independientes y no de gran tamaño, y queremos aplicar la misma operación a cada uno, "map" debería funcionar mejor.
 #Según lo observado al evaluar los 4 métodos, la eficiencia real debe determinarse con pruebas para cada caso específico de complejidad en 
 #las operaciones a realizar y equipo disponible.

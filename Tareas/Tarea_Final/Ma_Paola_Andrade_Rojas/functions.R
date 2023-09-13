@@ -9,26 +9,56 @@
 
 ############# PARTE 1.1 #################
 
-# Archivo "functions.R"
+# Función para extraer nombres de archivo de las URLs
 
 extract_name <- function(urls) {
-  year <- sub(".*/(\\d{4})/.*", "\\1", urls) #Regex para extraer el año
-  result <- paste0("esi-", year, "-personas.csv") #Combinamos "año" con nombre del archivo
-  result <- iconv(result, to = "UTF-8", sub = "byte") # Convierte a UTF-8, tuve problemas con guiones largos
-  return(result)
+  
+  file_names <- gsub(".*/([^?]+)\\?.*", "\\1", urls)
+  file_names <- gsub("[[:space:]\\\\/:*?\"<>|]", "_", file_names)
+  file_names <- gsub("-+", "-", file_names)
+  file_names <- gsub("^-|-$", "", file_names)
+  file_names <- tolower(file_names)
+  return(file_names)
 }
 
-download_esi_data <- function(urls, file_names, directory) {
+# Función para descargar un solo archivo
+
+download_esi_data <- function(url_2021, file_name, directory) {
   if (!dir.exists(directory)) {
-    dir.create(directory, recursive = TRUE)
+    dir.create(directory, recursive = TRUE)# Verificar si el directorio existe, si no crearlo
   }
   
-  for (i in 1:length(urls)) {
-    full_path <- file.path(directory, file_names[i])
-    curl_download(urls[i], destfile = full_path)
+  full_path <- file.path(directory, file_name)
+  GET(url_2021, write_disk(full_path, overwrite = TRUE))  # Descargar el archivo desde la URL
+  
+  cat("Archivo descargado en carpeta:", full_path, "\n")
+}
+
+# Definir la URL, nombre de archivo y directorio
+url_2021 <- "https://www.ine.cl/docs/default-source/encuesta-suplementaria-de-ingresos/bbdd/csv_esi/2021/esi-2021---personas.csv?sfvrsn=d03ae552_4&download=true"
+file_name <- "esi-2021-personas.csv"
+directory <- "data_esi2021"
+
+# Descargar el archivo
+download_esi_data(url_2021, file_name, directory)
+
+# Descargar todos los archivos
+
+directory2 <- "data_esi"
+download_esi_data <- function(urls, file_names, directory) {
+  if (!dir.exists(directory)) {
+    dir.create(directory, recursive = TRUE) # Verificar si el directorio existe, si no, crearlo
+  }
+  
+  for (i in seq_along(urls)) {
+    full_url <- urls[i] # Obtener la URL correspondiente a este archivo
+    full_path <- file.path(directory, file_names[i]) # Construir la ruta completa para guardar el archivo
+    GET(full_url, write_disk(full_path, overwrite = TRUE)) # Descargar el archivo desde la URL
+    
     cat("Archivo descargado en carpeta:", full_path, "\n")
   }
 }
+
 
 
 ########################################
@@ -169,17 +199,7 @@ calcular_promedio <- function(datos) {
   
   return(list(purrr = promedio_purrr, apilado = promedio_apilado, purrr_dt = promedio_purrr_dt, dt = promedio_dt))}
 
-#Archivos a procesar 
-
-archivos <- c("data/esi-2016-personas.csv",
-              "data/esi-2017-personas.csv",  
-              "data/esi-2018-personas.csv",
-              "data/esi-2019-personas.csv",
-              "data/esi-2020-personas.csv",
-              "data/esi-2021-personas.csv")
-
-
-#Cargar archivos especificando tipos de columna
+#Carga de archivos por tipos de columna
 datos <- map(archivos, ~ read_csv(.x, col_types = cols(.default = "d"))) # "d"=tipo numérico
 
 #Promedio y comparar tiempo de ejecución
